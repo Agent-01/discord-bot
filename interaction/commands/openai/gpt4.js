@@ -25,6 +25,6 @@ export async function execute(interaction) {
         await msg.delete();
     } else {
         await interaction.deferReply();
-        await interaction.editReply(`${generateText(interaction.option.getString("prompt"))}`);
+        await interaction.editReply(`${generateText(interaction.options.getString("prompt"))}`);
     }
 }
