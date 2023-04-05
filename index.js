@@ -1,5 +1,7 @@
 import {spawn} from "child_process";
 import fs from "fs";
+import express from "express";
+const app = express();
 const sleep = async (ms) => await new Promise(r => setTimeout(r, ms));
 let exited = false;
 const start = function start() {
@@ -42,6 +44,17 @@ const auto_check_function = async function () {
     await sleep(1000);
 };
 let auto_check = setInterval(auto_check_function,1000);
+
+app.get("/", (req, res) => {
+    if (exited) {
+        res.status(521).send("Discord bot is down");
+    } else {
+        res.send("Bot is now up");
+    }
+});
+
+app.listen(3001, () => console.log("API server listening on port 3001"));
+
 (async()=>{
     await sleep(10000);
     start();
