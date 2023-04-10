@@ -484,10 +484,10 @@ client.on("voiceStateUpdate", async (oldmember, newmember) => {
         let newuserchannel = newmember.channelId;
         if (newuserchannel && oldmember.channelId) {
             let embed = new EmbedBuilder()
-                .setAuthor({ name: `${newmember.member.user.tag}`, iconURL: `${newmember.member.user.avatarURL()}` })
-                .setDescription(newuserchannel != null?`📥 <@${newmember.member.user.id}> **joined voice channel** \`${newmember.channel.name}\``:`📤 <@${oldmember.member.user.id}> **left voice channel** \`${oldmember.channel.name}\``)
+                .setAuthor({ name: `${oldmember.channelId == null?newmember.member.user.tag:oldmember.member.user.tag}`, iconURL: `${oldmember.channelId == null?newmember.member.user.avatarURL():oldmember.member.user.avatarURL()}` })
+                .setDescription(oldmember.channelId == null?`📥 <@${newmember.member.user.id}> **joined voice channel** \`${newmember.channel.name}\``:`📤 <@${oldmember.member.user.id}> **left voice channel** \`${oldmember.channel.name}\``)
                 .setTimestamp(Date.now())
-                .setColor(newuserchannel != null?0x44b37f:0xf04848);
+                .setColor(oldmember.channelId == null?0x44b37f:0xf04848);
             await client.channels.fetch(process.env.LogChannel).then(async channel => {
                 await channel.send({ embeds: [embed] });
             });

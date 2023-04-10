@@ -4,6 +4,7 @@ import express from "express";
 const app = express();
 const sleep = async (ms) => await new Promise(r => setTimeout(r, ms));
 let exited = false;
+let closed = false;
 const start = function start() {
     const bot = spawn("node",["bot.js"]);
     bot.stdout.on("data", (data) => {
@@ -14,6 +15,7 @@ const start = function start() {
         console.log(String(data));
     });
     bot.on("close",(code) => {
+        closed = true;
         console.log("Bot process exited with code " + code);
         if (code==255) exited = "exit";
         else if (code==100) {
@@ -28,6 +30,7 @@ const auto_check_function = async function () {
         start();
         count+=15;
         exited = false;
+        closed = false;
     } else if (exited=="exit") {
         clearInterval(auto_check);
         await sleep(1000*60*60*24*31);
@@ -46,7 +49,7 @@ const auto_check_function = async function () {
 let auto_check = setInterval(auto_check_function,1000);
 
 app.get("/", (req, res) => {
-    if (exited) {
+    if (closed) {
         res.status(521).send("Discord bot is down");
     } else {
         res.send("Bot is now up");
