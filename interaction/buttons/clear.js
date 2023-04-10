@@ -31,11 +31,10 @@ export async function execute(interaction) {
                     try {
                         let messages = await interaction.channel.messages.fetch({ limit: n });
                         let msg = await interaction.channel.send(`Deleting ${Number(button.split(" ")[1]) - 1} messages./${Number(button.split(" ")[1]) - 1}個訊息正在刪除`);
-                        for (const message of messages) {
+                        messages.forEach(async(message)=>{
                             await message.delete();
                             n--;
-                        }
-                        await msg.delete();
+                        }).then(async()=>await msg.delete());
                     } catch (e) {
                         handle(interaction, e);
                     }
@@ -58,29 +57,32 @@ export async function execute(interaction) {
                 }
                 await interaction.channel.bulkDelete(n);
                 n=0;
-            } catch (e) {
+            } catch (er) {
                 if (o==n) {
-                    let msg = await interaction.channel.send(`Deleting ${o - 1} messages./${o - 1}個訊息正在刪除`);
-                    while (n >= 100) {
-                        let messages = await interaction.channel.messages.fetch({ limit: 100 });
+                    try {
+                        let msg = await interaction.channel.send(`Deleting ${o - 1} messages./${o - 1}個訊息正在刪除`);
+                        while (n >= 100) {
+                            let messages = await interaction.channel.messages.fetch({ limit: 100 });
+                            messages.forEach(async (message) => {
+                                if (message.id!=msg.id) {
+                                    await message.delete();
+                                    n--;
+                                }
+                            });
+                        }
+                        
+                        let messages = await interaction.channel.messages.fetch({ limit: n });
                         messages.forEach(async (message) => {
                             if (message.id!=msg.id) {
                                 await message.delete();
                                 n--;
                             }
-                        });
+                        }).then(async()=>await msg.delete());
+                    } catch (e) {
+                        handle(interaction, e);
                     }
-                    
-                    let messages = await interaction.channel.messages.fetch({ limit: n });
-                    messages.forEach(async (message) => {
-                        if (message.id!=msg.id) {
-                            await message.delete();
-                            n--;
-                        }
-                    });
-                    await msg.delete();
                 } else {
-                    let msg = await interaction.channel.send(`Error occured while deleting messages, please try again later.\nError: ${e}`);
+                    let msg = await interaction.channel.send(`Error occured while deleting messages, please try again later.\nError: ${er}`);
                     await sleep(2000);
                     try {
                         await msg.delete();
