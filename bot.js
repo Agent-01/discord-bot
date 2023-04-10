@@ -480,14 +480,24 @@ client.on("guildMemberRemove", async (ctx) => {
 });
 
 client.on("voiceStateUpdate", async (oldmember, newmember) => {
-    if (oldmember?.guild?.id == process.env.MyServerID) {
-        let newuserchannel = newmember.channelId;
-        if (newuserchannel && oldmember.channelId) {
+    if (oldmember?.guild?.id == process.env.MyServerID || newmember?.guild?.id == process.env.MyServerID) {
+        let new_channel = newmember.channelId;
+        let old_channel = oldmember.channelId;
+        if ((new_channel&&old_channel)||old_channel==null) {
             let embed = new EmbedBuilder()
-                .setAuthor({ name: `${oldmember.channelId == null?newmember.member.user.tag:oldmember.member.user.tag}`, iconURL: `${oldmember.channelId == null?newmember.member.user.avatarURL():oldmember.member.user.avatarURL()}` })
-                .setDescription(oldmember.channelId == null?`📥 <@${newmember.member.user.id}> **joined voice channel** \`${newmember.channel.name}\``:`📤 <@${oldmember.member.user.id}> **left voice channel** \`${oldmember.channel.name}\``)
+                .setAuthor({ name: `${newmember.member.user.tag}`, iconURL: `${newmember.member.user.avatarURL()}` })
+                .setDescription(`📥 <@${newmember.member.user.id}> **joined voice channel** \`${newmember.channel.name}\``)
                 .setTimestamp(Date.now())
-                .setColor(oldmember.channelId == null?0x44b37f:0xf04848);
+                .setColor(0x44b37f);
+            await client.channels.fetch(process.env.LogChannel).then(async channel => {
+                await channel.send({ embeds: [embed] });
+            });
+        } else if (new_channel==null) {
+            let embed = new EmbedBuilder()
+                .setAuthor({ name: `${oldmember.member.user.tag}`, iconURL: `${oldmember.member.user.avatarURL()}` })
+                .setDescription(`📤 <@${oldmember.member.user.id}> **left voice channel** \`${oldmember.channel.name}\``)
+                .setTimestamp(Date.now())
+                .setColor(0xf04848);
             await client.channels.fetch(process.env.LogChannel).then(async channel => {
                 await channel.send({ embeds: [embed] });
             });
