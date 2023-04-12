@@ -11,7 +11,7 @@ console.log("|    discord.js   imported✅|\n");
 import {DisTube} from "distube";
 import {SpotifyPlugin} from "@distube/spotify";
 console.log("|    DisTube   imported   ✅|\n");
-import Canvas from "@napi-rs/canvas";
+import Canvas from "canvas";
 console.log("|     canvas   imported   ✅|\n");
 import {generateResponse} from "./utils/OpenAi.js";
 import { log } from "./utils/Log.js";
@@ -346,15 +346,15 @@ client.on("messageCreate", async (ctx) => {
         } else if (ctx.guild==null&&ctx.content!=undefined&&!isNaN(ctx.content)&&ctx.author.id!=client.user.id) {
             let file_data = JSON.parse(fs.readFileSync("./json/Config.json", "utf8"));
             let verify_file = file_data["Verify"];
-            if (verify_file["Verify"][0][`${ctx.author.id}`]==undefined) return;
-            if (verify_file["Verify"][0][`${ctx.author.id}`]!=parseInt(ctx.content)) {
+            if (verify_file[0]["users"][`${ctx.author.id}`]==undefined) return;
+            if (verify_file[0]["users"][`${ctx.author.id}`]!=parseInt(ctx.content)) {
                 await ctx.reply("You failed the verification. Please click the verify button again to verify.\n你未通過驗證。請再次點擊驗證按鈕進行驗證。");
             } else {
                 await ctx.reply("You passed the verification!\n您通過了驗證！");
                 let server = await client.guilds.fetch(process.env.MyServerID);
                 server.members.removeRole({user: ctx.author,role: server.roles.cache.find(role=> role.id==process.env.QuarantineRole)});
             }
-            verify_file["Verify"][0][`${ctx.author.id}`] = undefined;
+            verify_file[0]["users"][`${ctx.author.id}`] = undefined;
             file_data["Verify"] = verify_file;
             fs.writeFileSync("./json/Config.json", JSON.stringify(file_data,null,4));
         }

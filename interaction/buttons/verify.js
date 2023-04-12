@@ -1,5 +1,5 @@
 import fs from "fs";
-import Canvas from "@napi-rs/canvas";
+import Canvas from "canvas";
 import { config } from "dotenv";
 
 config();
@@ -7,8 +7,7 @@ config();
 export const customId = "verify";
 
 export async function execute(interaction) {
-    let verify_file = fs.readFileSync("./json/Config.json");
-    verify_file = JSON.parse(verify_file);
+    let verify_file = JSON.parse(fs.readFileSync("./json/Config.json"));
     if (!interaction.member.roles.cache.has(process.env.QuarantineRole)) {
         await interaction.reply({content:"You have already verified!",ephemeral: true});
         return;
