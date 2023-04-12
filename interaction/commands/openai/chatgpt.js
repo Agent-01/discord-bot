@@ -17,8 +17,17 @@ export async function execute(interaction,client) {
     const questionInput = new TextInputBuilder()
         .setCustomId("questionInput")
         .setLabel("The question or message that sends to the bot")
-        .setStyle(TextInputStyle.Paragraph);
+        .setStyle(TextInputStyle.Paragraph)
+        .setMaxLength(2000);
+    const dm = new TextInputBuilder()
+        .setCustomId("dm")
+        .setLabel("Send in direct message or not? (Y/N)")
+        .setStyle(TextInputStyle.Short)
+        .setValue("N")
+        .setRequired(false)
+        .setMaxLength(1);
     const row1 = new ActionRowBuilder().addComponents(questionInput);
-    modal.addComponents(row1);
+    const row2 = new ActionRowBuilder().addComponents(dm);
+    modal.addComponents(row1,row2);
     await interaction.showModal(modal);
 }

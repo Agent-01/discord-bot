@@ -483,7 +483,7 @@ client.on("voiceStateUpdate", async (oldmember, newmember) => {
     if (oldmember?.guild?.id == process.env.MyServerID || newmember?.guild?.id == process.env.MyServerID) {
         let new_channel = newmember.channelId;
         let old_channel = oldmember.channelId;
-        if ((new_channel&&old_channel)||old_channel==null) {
+        if ((new_channel&&old_channel)&&old_channel!=new_channel||old_channel==null) {
             let embed = new EmbedBuilder()
                 .setAuthor({ name: `${newmember.member.user.tag}`, iconURL: `${newmember.member.user.avatarURL()}` })
                 .setDescription(`📥 <@${newmember.member.user.id}> **joined voice channel** \`${newmember.channel.name}\``)
