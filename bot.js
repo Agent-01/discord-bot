@@ -6,7 +6,7 @@ console.log("|  node  modules imported ✅|\n");
 import {config} from "dotenv";
 console.log("|    dotenv    imported   ✅|\n");
 import {REST} from "@discordjs/rest";
-import {Client,Routes,EmbedBuilder,Partials,Collection} from "discord.js";
+import {Client, Routes, EmbedBuilder, Partials, Collection} from "discord.js";
 console.log("|    discord.js   imported✅|\n");
 import {DisTube} from "distube";
 import {SpotifyPlugin} from "@distube/spotify";
@@ -14,15 +14,15 @@ console.log("|    DisTube   imported   ✅|\n");
 import Canvas from "canvas";
 console.log("|     canvas   imported   ✅|\n");
 import {generateResponse} from "./utils/OpenAi.js";
-import { log } from "./utils/Log.js";
-import { get_warnings } from "./utils/get_warnings.js";
-import { change_date, change_time, change_status } from "./utils/channelNameUpdate.js";
-import { memes } from "./utils/memes.js";
-import { helpRow } from "./utils/help.js";
+import {log} from "./utils/Log.js";
+import {get_warnings} from "./utils/get_warnings.js";
+import {change_date, change_time, change_status} from "./utils/channelNameUpdate.js";
+import {memes} from "./utils/memes.js";
+import {helpRow} from "./utils/help.js";
 console.log("|     utils    imported   ✅|\n");
-config();
 
 console.log("----------------------------\n|      initializing...     |");
+config();
 fs.writeFileSync("./logs/Last.log",fs.readFileSync("./logs/Latest.log"));
 fs.writeFileSync("./logs/Latest.log","");
 const TOKEN = process.env.DiscordBotToken;
@@ -181,10 +181,7 @@ client.once("ready", async () => {
     console.log(`Startup time taken: ${((login_time - init_time) / 1000).toFixed(3)}s`);
     log(`Startup time taken: ${((login_time - init_time) / 1000).toFixed(3)}s`);
     init_time = undefined;
-    client.user.setActivity({
-        name: "/help",
-        type: 2
-    });
+    client.user.setActivity("/help", {type: 2});
     let data = JSON.parse(fs.readFileSync("./json/Config.json"));
     let file_red = data["Restart"];
     if (file_red["Time"] != 0 && file_red["Message"] != "") {
@@ -269,10 +266,12 @@ client.once("ready", async () => {
         }
     }, 1000 * 60 * 5);
     setInterval(async () => await change_status(my_server), 1000 * 60 * 5);
+    setInterval(() => client.user.setActivity("/help", {type: 2}), 1000 * 60 * 60 * 2);
 });
 
 client.on("rateLimit", async(data)=>{
     await client.users.fetch(process.env.MyUserID).then(async user=> await user.send(`The bot is being rate limited.\nTimeout: ${data.timeout}\nLimit: ${data.limit}\nMethod: ${data.method}\nPath: ${data.path}\nRoute: ${data.route}\nGlobal: ${data.global}`));
+    console.error(data);
 });
 
 client.on("messageCreate", async (ctx) => {
