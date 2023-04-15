@@ -19,6 +19,7 @@ import {get_warnings} from "./utils/get_warnings.js";
 import {change_date, change_time, change_status} from "./utils/channelNameUpdate.js";
 import {memes} from "./utils/memes.js";
 import {helpRow} from "./utils/help.js";
+import {user_ids} from "./json/user_ids.js";
 console.log("|     utils    imported   ✅|\n");
 
 console.log("----------------------------\n|      initializing...     |");
@@ -110,6 +111,7 @@ client.tictactoe_players = [];
 client.tictactoe_pending = [];
 client.chatgptlist = [];
 client.suggestcooldownlist = [];
+client.lockdown = false;
 const rest = new REST({ version: "10" }).setToken(TOKEN);
 let generatingText = false;
 let commands = [];
@@ -521,6 +523,10 @@ client.on("messageUpdate", async (oldmsg, newmsg) => {
 
 client.on("interactionCreate", async (ita) => {
     try {
+        if (client.lockdown&&!user_ids.includes(ita.user.id)) {
+            await ita.reply("The bot is currently locked down, please contact the administrator if you beilive this is an error.");
+            return;
+        }
         if (ita.isStringSelectMenu()) {
             const SelectMenu = client.selectMenus.get(ita.customId);
             await SelectMenu.execute(ita,client);
