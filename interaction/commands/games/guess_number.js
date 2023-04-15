@@ -8,18 +8,13 @@ export const data = new SlashCommandBuilder()
         option.setName("max_range")
             .setDescription("The maximum number the number could be/最大數字")
             .setRequired(false)
+            .setMinValue(4)
             .setMaxValue(99999999999999));
 
 export const guild = true;
 
 export async function execute(interaction, client) {
     if (client.game_number == {} || client.game_number[interaction.guildId] == undefined) {
-        if (interaction.options.getInteger("max_range") != null) {
-            if (interaction.options.getInteger("max_range") <= 3) {
-                await interaction.reply("The range is too small. Please try again.");
-                return;
-            }
-        }
         if (interaction.options.getInteger("max_range") == null) client.game_number[interaction.guildId] = Math.round(Math.random() * (1000 - 1)) + 1;
         else client.game_number[interaction.guildId] = Math.round(Math.random() * (interaction.options.getInteger("max_range") - 1)) + 1;
         client.game_number_small[interaction.guildId] = 1;

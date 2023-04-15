@@ -303,24 +303,24 @@ client.on("messageCreate", async (ctx) => {
                         client.game_number_big[ctx.guildId] = undefined;
                         client.game_on_progress[ctx.guildId] = undefined;
                         client.game_timeout[ctx.guildId] = undefined;
-                    } else if (number < client.game_number[ctx.guildId] && number > client.game_number_small[ctx.guildId]) {
+                        return;
+                    }
+                    if (number < client.game_number[ctx.guildId] && number > client.game_number_small[ctx.guildId]) {
                         await ctx.delete();
                         if (client.game_reply[ctx.guildId] == false) await client.game_on_progress[ctx.guildId].edit({ content: `That's a wrong number! ${number}-${client.game_number_big[ctx.guildId]}\n那不是正確的數字！請在${number}和${client.game_number_big[ctx.guildId]}之間猜一個數字` });
                         else await client.game_on_progress[ctx.guildId].interaction.editReply({ content: `That's a wrong number! ${number}-${client.game_number_big[ctx.guildId]}\n那不是正確的數字！請在${number}和${client.game_number_big[ctx.guildId]}之間猜一個數字` });
                         client.game_number_small[ctx.guildId] = number;
-                        client.game_timeout[ctx.guildId] += 30;
                     } else if (number > client.game_number[ctx.guildId] && number < client.game_number_big[ctx.guildId]) {
                         await ctx.delete();
                         if (client.game_reply[ctx.guildId] == false) await client.game_on_progress[ctx.guildId].edit({ content: `That's a wrong number! ${client.game_number_small[ctx.guildId]}-${number}\n那不是正確的數字！請在${client.game_number_small[ctx.guildId]}和${number}之間猜一個數字` });
                         else await client.game_on_progress[ctx.guildId].interaction.editReply({ content: `That's a wrong number! ${client.game_number_small[ctx.guildId]}-${number}\n那不是正確的數字！請在${client.game_number_small[ctx.guildId]}和${number}之間猜一個數字` });
                         client.game_number_big[ctx.guildId] = number;
-                        client.game_timeout[ctx.guildId] += 30;
                     } else {
                         await ctx.delete();
                         if (client.game_reply == false) await client.game_on_progress[ctx.guildId].edit({ content: `Invalid number! ${client.game_number_small[ctx.guildId]}-${client.game_number_big[ctx.guildId]}\n無效的數字！請在${client.game_number_small[ctx.guildId]}和${client.game_number_big[ctx.guildId]}之間猜一個數字` });
                         else await client.game_on_progress[ctx.guildId].interaction.editReply({ content: `Invalid number! ${client.game_number_small[ctx.guildId]}-${client.game_number_big[ctx.guildId]}\n無效的數字！請在${client.game_number_small[ctx.guildId]}和${client.game_number_big[ctx.guildId]}之間猜一個數字` });
-                        client.game_timeout[ctx.guildId] += 30;
                     }
+                    client.game_timeout[ctx.guildId] += 30;
                     if (client.game_number_big[ctx.guildId] - client.game_number_small[ctx.guildId] == 2) {
                         if (client.game_reply[ctx.guildId] == false) await client.game_on_progress[ctx.guildId].edit({ content: `Everyone lose! The number is ${client.game_number_big[ctx.guildId] - 1}!\n所有人都輸了！數字是${client.game_number_big[ctx.guildId] - 1}！` });
                         else await client.game_on_progress[ctx.guildId].interaction.editReply({ content: `Everyone lose! The number is ${client.game_number_big[ctx.guildId] - 1}!\n所有人都輸了！數字是${client.game_number_big[ctx.guildId] - 1}！` });
