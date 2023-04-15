@@ -7,7 +7,8 @@ export const data = new SlashCommandBuilder()
     .addIntegerOption(option =>
         option.setName("max_range")
             .setDescription("The maximum number the number could be/最大數字")
-            .setRequired(false));
+            .setRequired(false)
+            .setMaxValue(99999999999999));
 
 export const guild = true;
 
