@@ -22,7 +22,7 @@ export const data = new SlashCommandBuilder()
 export const guild = true;
 
 export async function execute(interaction, client) {
-    if (client.bot_a == false) {
+    if (!client.bot_a) {
         let find_url = "";
         if (interaction.options.getString("url") != null && interaction.options.getString("url") != "") {
             find_url = interaction.options.getString("url");
@@ -148,7 +148,7 @@ export async function execute(interaction, client) {
                 }
             }
         }
-        client.bot_a = false;
+        client.bot_a = undefined;
         await masg.delete();
     } else {
         const Embed = new EmbedBuilder()

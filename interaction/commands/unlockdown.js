@@ -5,6 +5,6 @@ export const data = new SlashCommandBuilder()
     .setDescription("You don't need to know this :)");
 
 export async function execute(interaction, client) {
-    client.lockdown = false;
+    client.lockdown = undefined;
     await interaction.reply("Unlocked!");
 }

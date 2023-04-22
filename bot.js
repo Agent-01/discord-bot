@@ -20,6 +20,7 @@ import {change_date, change_time, change_status} from "./utils/channelNameUpdate
 import {memes} from "./utils/memes.js";
 import {helpRow} from "./utils/help.js";
 import {user_ids} from "./json/user_ids.js";
+import {hangman_guess} from "./utils/hangman_guess.js";
 console.log("|     utils    imported   ✅|\n");
 
 console.log("----------------------------\n|      initializing...     |");
@@ -97,10 +98,6 @@ for (const file of files) {
         throw new Error("import non-js file");
     }
 }
-client.bot_a = false;
-client.bot_s = false;
-client.bot_a_timeleft = 0;
-client.bot_s_timeleft = 0;
 client.game_number = {};
 client.game_number_small = {};
 client.game_number_big = {};
@@ -111,7 +108,7 @@ client.tictactoe_players = [];
 client.tictactoe_pending = [];
 client.chatgptlist = [];
 client.suggestcooldownlist = [];
-client.lockdown = false;
+client.hangman = [];
 const rest = new REST({ version: "10" }).setToken(TOKEN);
 let generatingText = false;
 let commands = [];
@@ -341,10 +338,12 @@ client.on("messageCreate", async (ctx) => {
                     console.error(err);
                 }
             }
-        } else if (ctx.content==`<@${process.env.DiscordBotID}>`&&ctx.author.id!=client.user.id&&!ctx.author.bot) {
+        }
+        if (ctx.content==`<@${process.env.DiscordBotID}>`&&ctx.author.id!=client.user.id&&!ctx.author.bot) {
             await ctx.reply({content:"Hi! How can I help you? :p",components:[helpRow],ephemeral:true});
             return;
-        } else if (ctx.guild==null&&ctx.content!=undefined&&!isNaN(ctx.content)&&ctx.author.id!=client.user.id) {
+        }
+        if (ctx.guild==null&&ctx.content!=undefined&&!isNaN(ctx.content)&&ctx.author.id!=client.user.id) {
             let file_data = JSON.parse(fs.readFileSync("./json/Config.json", "utf8"));
             let verify_file = file_data["Verify"];
             if (verify_file[0]["users"][`${ctx.author.id}`]==undefined) return;
@@ -396,6 +395,9 @@ client.on("messageCreate", async (ctx) => {
                     console.error(e);
                 }
             }
+        }
+        if (client.hangman[ctx.guildId] != undefined && ctx.author.id != client.user.id && ctx.content.length == 1) {
+            hangman_guess(ctx, client);
         }
     } catch (e) {
         console.error(e);

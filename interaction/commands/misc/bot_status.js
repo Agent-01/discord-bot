@@ -15,7 +15,7 @@ export const data = new SlashCommandBuilder()
 export const guild = true;
 
 export async function execute(interaction, client) {
-    if (client.bot_s == false) {
+    if (!client.bot_s) {
         if (user_ids.includes(interaction.user.id) || interaction.user.id == interaction.guild.ownerId) {
             let lst = [
                 "online",
@@ -96,7 +96,7 @@ export async function execute(interaction, client) {
                 }
             }
         }
-        client.bot_s = false;
+        client.bot_s = undefined;
         await masg.delete();
     } else {
         const Embed = new EmbedBuilder()
