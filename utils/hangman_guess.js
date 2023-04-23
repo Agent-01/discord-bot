@@ -62,6 +62,7 @@ export async function hangman_guess(ctx,client) {
     ctx.content = ctx.content.toLowerCase();
     // eslint-disable-next-line quotes
     if (ctx.content<'a'||ctx.content>'z') return;
+    await ctx.delete();
     if (word.includes(ctx.content)) {
         client.hangman[ctx.guild.id].shown = show(word,client.hangman[ctx.guild.id].shown,ctx.content);
         if (client.hangman[ctx.guild.id].shown==client.hangman[ctx.guild.id].word) {
@@ -77,7 +78,6 @@ export async function hangman_guess(ctx,client) {
         });
     } else {
         if (client.hangman[ctx.guild.id].wrong.includes(ctx.content)) {
-            await ctx.delete();
             return;
         }
         client.hangman[ctx.guild.id].phrase++;
@@ -91,7 +91,6 @@ export async function hangman_guess(ctx,client) {
                 phrase[client.hangman[ctx.guild.id].phrase-1]
             });
             client.hangman[ctx.guild.id] = undefined;
-            await ctx.delete();
             return;
         }
         await client.hangman[ctx.guild.id].message.edit({content:
@@ -101,5 +100,4 @@ export async function hangman_guess(ctx,client) {
             client.hangman[ctx.guild.id].hangman
         });
     }
-    await ctx.delete();
 }
