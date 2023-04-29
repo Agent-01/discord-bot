@@ -61,11 +61,25 @@ export async function hangman_guess(ctx,client) {
     const word = client.hangman[ctx.guild.id].word;
     ctx.content = ctx.content.toLowerCase();
     // eslint-disable-next-line quotes
-    if (ctx.content<'a'||ctx.content>'z') return;
+    if (ctx.content<'a'||ctx.content>'z'||ctx.content.length!=1&&ctx.content.length!=word.length) return;
     await ctx.delete();
+    if (!client.hangman[ctx.guildId].word||!client.hangman[ctx.guildId].shown||
+        !client.hangman[ctx.guildId].timeout||!client.hangman[ctx.guildId].hangman||
+        client.hangman[ctx.guildId].phrase==undefined
+    ) return;
+    let check_messages;
+    try {
+        check_messages = await ctx.channel?.messages?.fetch((await client?.hangman[ctx.guildId]?.message?.fetch())?.id);
+    } catch (e) {
+        console.error(e);
+    }
+    if (!check_messages) {
+        client.hangman[ctx.guildId] = undefined;
+        return;
+    }
     if (word.includes(ctx.content)) {
-        client.hangman[ctx.guild.id].shown = show(word,client.hangman[ctx.guild.id].shown,ctx.content);
-        if (client.hangman[ctx.guild.id].shown==client.hangman[ctx.guild.id].word) {
+        if (ctx.content.length==1) client.hangman[ctx.guild.id].shown = show(word,client.hangman[ctx.guild.id].shown,ctx.content);
+        if (client.hangman[ctx.guild.id].shown==client.hangman[ctx.guild.id].word||word==ctx.content) {
             await client.hangman[ctx.guild.id].message.edit(`<@${ctx.author.id}> have save the guy! The word is ${ctx.client.hangman[ctx.guild.id].word}!`);
             ctx.client.hangman[ctx.guild.id] = undefined;
             return;

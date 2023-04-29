@@ -374,7 +374,10 @@ client.on("messageCreate", async (ctx) => {
                 try {
                     chatjson = JSON.parse(fs.readFileSync("./json/Chat.json"));
                     const gpt_response = await generateResponse(chatjson,generatingText);
-                    await ctx.reply(gpt_response);
+                    if (gpt_response.length>=2000) {
+                        fs.writeFileSync("ChatGPT.txt",gpt_response);
+                        await ctx.reply({content:"Response exceeded 2000 characters, which is sent in the file below.", files:["./ChatGPT.txt"]});
+                    } else await ctx.reply(gpt_response);
                     chatjson.push({
                         "role": "assistant",
                         "content": gpt_response
@@ -396,7 +399,7 @@ client.on("messageCreate", async (ctx) => {
                 }
             }
         }
-        if (client.hangman[ctx.guildId] != undefined && ctx.author.id != client.user.id && ctx.content.length == 1) {
+        if (client.hangman[ctx.guildId] != undefined && ctx.author.id != client.user.id) {
             hangman_guess(ctx, client);
         }
     } catch (e) {
