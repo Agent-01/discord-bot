@@ -529,7 +529,7 @@ client.on("messageUpdate", async (oldmsg, newmsg) => {
 client.on("interactionCreate", async (ita) => {
     try {
         if (client.lockdown&&!user_ids.includes(ita.user.id)) {
-            await ita.reply("The bot is currently locked down, please contact the administrator if you beilive this is an error.");
+            await ita.reply("The bot is currently locked down, please contact the administrator if you believe this is an error.");
             return;
         }
         if (ita.isStringSelectMenu()) {
