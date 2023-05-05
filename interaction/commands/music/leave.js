@@ -23,11 +23,11 @@ export async function execute(interaction, client) {
                 return;
             }
         }
-    }
-    try {
-        await queue.stop();
-    } catch (e) {
-        console.error(e);
+        try {
+            await queue.stop();
+        } catch (e) {
+            console.error(e);
+        }
     }
     await client.DisTube.voices.leave(interaction.guild);
     await interaction.reply("Bot left voice channel sadly :(\n機器人傷心地離開了 :(");

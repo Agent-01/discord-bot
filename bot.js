@@ -287,6 +287,7 @@ client.on("messageCreate", async (ctx) => {
         log(`\n\n ${String(e)}`);
     }
     try {
+        if (client.lockdown&&!user_ids.includes(ctx.user.id)) return;
         if (client.game_number[ctx.guildId] != undefined && ctx.author.id != client.user.id) {
             try {
                 if (isNaN(ctx.content) == false && ctx.channelId == client.game_on_progress[ctx.guildId].interaction.channelId) {

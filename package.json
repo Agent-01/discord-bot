@@ -1,6 +1,6 @@
 {
   "name": "agent-discord-bot",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A discord bot made by Agent#6585 with discord.js",
   "main": "index.js",
   "type": "module",
