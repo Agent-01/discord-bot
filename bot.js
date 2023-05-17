@@ -411,6 +411,8 @@ client.on("messageCreate", async (ctx) => {
 
 client.on("guildMemberAdd", async (ctx) => {
     if (ctx.guild.id == process.env.MyServerID) {
+        if (ctx.partial)
+            ctx = await ctx.fetch();
         await ctx.guild.members.addRole({user: ctx,role: ctx.guild.roles.cache.find(role=> role.id==process.env.QuarantineRole)});
         log(`Sending new banners with welcome message in ${ctx.guild.name}`);
         let welcome_banner = welcomeCanvas;
@@ -422,7 +424,9 @@ client.on("guildMemberAdd", async (ctx) => {
         welcomeCanvas.context.font = "48px Noto Sans HK";
         welcome_banner.context.fillText(`${ctx.user.tag} just joined the server`, 512, 380);
         welcome_banner.context.font = "32px DejaVu Sans";
-        welcome_banner.context.fillText(`Member #${ctx.guild.memberCount + 1}`, 512, 425);
+        const status_json = JSON.parse(fs.readFileSync("./json/Config.json"));
+        status_json["Stats"][0]["Members"]++;
+        welcome_banner.context.fillText(`Member #${status_json.Stats[0].Members}`, 512, 425);
         welcome_banner.context.beginPath();
         welcome_banner.context.arc(512, 166, 119, 0, Math.PI * 2, true);
         welcome_banner.context.closePath();
@@ -432,17 +436,12 @@ client.on("guildMemberAdd", async (ctx) => {
         await client.channels.fetch(process.env.MyServerWelcomeChannelID).then(async (channel) => {
             await channel.send({ content: `Hey <@${ctx.user.id}>, welcome to **${ctx.guild.name}** ! <a:idiotcat:875166689933815848> <a:dancingidk:875177936901247007> <a:meow:875178156942839909> <a:rainbowsheep:875178121895227412> <:ohhhhhhh:875171913624875009> <a:clapclapclap:875171998551146546>`, files: [{ attachment: welcome_banner.create.toBuffer(), name: `welcome-${ctx.id}.png` }] });
         });
-        let status_json = fs.readFileSync("./json/Config.json");
-        status_json = JSON.parse(status_json);
-        status_json["Stats"][0]["Members"]++;
-        fs.writeFileSync("./json/Config.json", JSON.stringify(status_json,null,4));
         ctx.guild.channels.fetch(process.env.TotalMembersChannelID).then(async channel=> {
             await channel.edit({name: `Total Members: ${status_json["Stats"][0]["Members"]}`});
             log("Edited Total Members");
         });
         if (ctx.user.bot) {
             status_json["Stats"][0]["Bot"]++;
-            fs.writeFileSync("./json/Config.json", JSON.stringify(status_json,null,4));
             ctx.guild.channels.fetch(process.env.BotChannelID).then(async channel=> {
                 await channel.edit({name: `Bot: ${status_json["Stats"][0]["Bot"]}`});
                 log("Edited total number of Bot");
@@ -453,6 +452,7 @@ client.on("guildMemberAdd", async (ctx) => {
                 log("Edited total number of Users");
             });
         }
+        fs.writeFileSync("./json/Config.json", JSON.stringify(status_json,null,4));
     }
 });
 
